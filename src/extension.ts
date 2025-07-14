@@ -1,61 +1,75 @@
-// Removed all references to verse.ts and related commands
-// Cleaned up the file to only include the AI-powered functionality
-
 import * as vscode from 'vscode';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 const apiKey = process.env.OPENAI_API_KEY;
+console.log('Gemini API Key:', apiKey);
+
+if (!apiKey) {
+	vscode.window.showErrorMessage('OPENAI_API_KEY is not set. Please set it in your environment or .env file.');
+	throw new Error('OPENAI_API_KEY is not set.');
+}
 
 async function generateAIPoweredVerseFill(wordCount: number): Promise<string> {
 	try {
-		const response = await axios.post('https://api.openai.com/v1/completions', {
-			model: 'text-davinci-003',
-			prompt: `when ever i write the word "versefill" and write number like this "versefill7". I want you to generate phrase or sentence that amounts to that number specified word total. Be exact with that number of words specified
-
-The texts generated must be referenced from the bible. and it has to make sense despite the number of words requested. and lastly ,not that much repeated. Now let's give it a try,  versefill${wordCount}`,
-			max_tokens: wordCount * 2, // Adjust token limit based on word count
-			temperature: 0.7
-		}, {
-			headers: {
-				'Authorization': `Bearer ${apiKey}`,
-				'Content-Type': 'application/json'
+		const response = await axios.post(
+			'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+			{
+				contents: [
+					{
+						parts: [
+							{
+								text: `Generate a Bible-based placeholder paragraph of exactly ${wordCount} words. The text should be meaningful, coherent, and resemble real Bible verses or phrases, but should not copy actual scripture. Output a single paragraph, not a list of words.`
+							}
+						]
+					}
+				]
+			},
+			{
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				params: {
+					key: apiKey
+				}
 			}
-		});
+		);
 
-		let text = response.data.choices[0].text.trim();
-		let words = text.split(/\s+/);
-
-		// Enforce exact word count
-		if (words.length > wordCount) {
-			text = words.slice(0, wordCount).join(' '); // Trim to exact word count
-		} else if (words.length < wordCount) {
-			// Retry logic if fewer words are generated
-			const additionalWords = await generateAIPoweredVerseFill(wordCount - words.length);
-			text = text + ' ' + additionalWords;
-		}
-
-		return text;
+		// Gemini's response structure
+		const result = response.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+		return result.trim();
 	} catch (error) {
+		console.error('The API key is:', apiKey);
 		console.error('Error generating AI-powered text:', error);
 		return 'Error generating text. Please try again.';
 	}
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	// Monitor text changes in the editor
+	// Automatic keyword trigger inside the document
 	const disposable = vscode.workspace.onDidChangeTextDocument(async (event) => {
 		const editor = vscode.window.activeTextEditor;
-		if (!editor || event.document !== editor.document) {
+		console.log('onDidChangeTextDocument fired');
+		if (!editor) {
+			console.log('No active editor');
 			return;
 		}
-
+		if (event.document !== editor.document) {
+			console.log('Changed document is not the active editor document');
+			return;
+		}
 		const text = editor.document.getText();
+		console.log('Current document text:', text);
 		const match = text.match(/versefill(\d+)/);
+		console.log('Regex match:', match);
 		if (match && match.index !== undefined) {
+			console.log('Trigger keyword found at index:', match.index);
 			const wordCount = parseInt(match[1], 10);
+			console.log('Parsed wordCount:', wordCount);
 			if (!isNaN(wordCount) && wordCount > 0) {
+				console.log('Valid wordCount, calling generateAIPoweredVerseFill');
 				const generatedText = await generateAIPoweredVerseFill(wordCount);
 				const edit = new vscode.WorkspaceEdit();
 				const range = new vscode.Range(
@@ -64,35 +78,41 @@ export function activate(context: vscode.ExtensionContext) {
 				);
 				edit.replace(editor.document.uri, range, generatedText);
 				await vscode.workspace.applyEdit(edit);
+				console.log('Applied edit to document');
 			}
 		}
 	});
 
 	context.subscriptions.push(disposable);
 
-	let dynamicVersefillCommand = vscode.commands.registerCommand('versefill.dynamic', async (args) => {
+	// Manual command trigger from Command Palette or Keybinding
+	const manualVersefillCommand = vscode.commands.registerCommand('versefill.manual', async (args) => {
 		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			const command = args?.command || '';
-			const match = command.match(/versefill(\d+)?/);
-			const wordCount = match && match[1] ? parseInt(match[1], 10) : 10;
+		if (!editor) return;
 
-			if (!isNaN(wordCount) && wordCount > 0) {
+		const command = args?.command || '';
+		const match = command.match(/versefill(\d+)/);
+		const wordCount = match && match[1] ? parseInt(match[1], 10) : 10;
+
+		if (!isNaN(wordCount) && wordCount > 0) {
+			try {
 				const text = await generateAIPoweredVerseFill(wordCount);
-				editor.edit(editBuilder => {
+				editor.edit((editBuilder) => {
 					if (editor.selection.isEmpty) {
 						editBuilder.insert(editor.selection.active, text);
 					} else {
 						editBuilder.replace(editor.selection, text);
 					}
 				});
-			} else {
-				vscode.window.showErrorMessage('Invalid word count specified in the command.');
+			} catch (error) {
+				vscode.window.showErrorMessage('VerseFill error: ' + (typeof error === 'object' && error !== null && 'message' in error ? (error as any).message : String(error)));
 			}
+		} else {
+			vscode.window.showErrorMessage('Invalid or missing word count.');
 		}
 	});
 
-	context.subscriptions.push(dynamicVersefillCommand);
+	context.subscriptions.push(manualVersefillCommand);
 }
 
 export function deactivate() {}

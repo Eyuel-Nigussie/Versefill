@@ -1,5 +1,5 @@
 {
-  "name": "lorem-VerseFill",
+  "name": "lorem-versefill",
   "displayName": "Lorem VerseFill",
   "description": "Generate meaningful, non-repetitive Bible-based placeholder text just like Lorem Ipsum by writing the versefill keyword!",
   "version": "0.0.1",
@@ -10,29 +10,22 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onCommand:versefill.generateShort",
-    "onCommand:versefill.generateMedium",
-    "onCommand:versefill.generateLong",
-    "onCommand:versefill.generateCustom"
+    "*",
+    "onCommand:versefill.manual"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "versefill.generateShort",
-        "title": "VerseFill: Generate Short Text (~100 words)"
-      },
+        "command": "versefill.manual",
+        "title": "VerseFill: Generate Bible-based Placeholder Text"
+      }
+    ],
+    "keybindings": [
       {
-        "command": "versefill.generateMedium",
-        "title": "VerseFill: Generate Medium Text (~250 words)"
-      },
-      {
-        "command": "versefill.generateLong",
-        "title": "VerseFill: Generate Long Text (~500 words)"
-      },
-      {
-        "command": "versefill.generateCustom",
-        "title": "VerseFill: Generate Custom Length Text"
+        "command": "versefill.manual",
+        "key": "ctrl+alt+v",
+        "when": "editorTextFocus"
       }
     ],
     "configuration": {
@@ -58,7 +51,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "clean": "rimraf dist out build"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
