@@ -3,6 +3,7 @@
   "displayName": "Lorem VerseFill",
   "description": "Generate meaningful, non-repetitive Bible-based placeholder text just like Lorem Ipsum by writing the versefill keyword!",
   "version": "0.0.1",
+  "icon": "versefill.png", 
   "engines": {
     "vscode": "^1.98.0"
   },
