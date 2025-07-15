@@ -71,5 +71,15 @@
   "dependencies": {
     "axios": "^1.8.4",
     "dotenv": "^16.5.0"
+  },
+  "publisher": "eyuel-nigussie",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eyuel-nigussie/lorem-versefill.git"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/eyuel-nigussie/lorem-versefill",
+  "bugs": {
+    "url": "https://github.com/eyuel-nigussie/lorem-versefill/issues"
   }
 }
