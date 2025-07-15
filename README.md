@@ -11,7 +11,7 @@ VerseFill is a Visual Studio Code extension that generates meaningful, Bible-ins
 ## Usage
 - Type `versefill<number>` in your document (e.g., `versefill30`)
 - Save or make a change to trigger automatic replacement
-- Or run the command `VerseFill: Generate Bible-based Placeholder Text` from the Command Palette (`Ctrl+Shift+P`)
+- Or run the command `Versefill: Generate Bible-based Placeholder Text` from the Command Palette (`Ctrl+Shift+P`)
 - Use the keyboard shortcut `Ctrl+Alt+V` to trigger the command
 
 ## Requirements

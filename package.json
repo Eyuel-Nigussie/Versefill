@@ -1,6 +1,6 @@
 {
-  "name": "lorem-versefill",
-  "displayName": "Lorem VerseFill",
+  "name": "Versefill",
+  "displayName": "Versefill",
   "description": "Generate meaningful, non-repetitive Bible-based placeholder text just like Lorem Ipsum by writing the versefill keyword!",
   "version": "0.0.1",
   "icon": "versefill.png", 
@@ -75,11 +75,11 @@
   "publisher": "eyuel-nigussie",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eyuel-nigussie/lorem-versefill.git"
+    "url": "https://github.com/eyuel-nigussie/Versefill.git"
   },
   "license": "MIT",
-  "homepage": "https://github.com/eyuel-nigussie/lorem-versefill",
+  "homepage": "https://github.com/eyuel-nigussie/Versefill",
   "bugs": {
-    "url": "https://github.com/eyuel-nigussie/lorem-versefill/issues"
+    "url": "https://github.com/eyuel-nigussie/Versefill/issues"
   }
 }
