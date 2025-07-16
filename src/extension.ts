@@ -1,47 +1,35 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
-const apiKey = process.env.OPENAI_API_KEY;
-console.log('Gemini API Key:', apiKey);
-
-if (!apiKey) {
-	vscode.window.showErrorMessage('OPENAI_API_KEY is not set. Please set it in your environment or .env file.');
-	throw new Error('OPENAI_API_KEY is not set.');
-}
 
 async function generateAIPoweredVerseFill(wordCount: number): Promise<string> {
+	const PROXY_URL = "https://versefill-proxy.eyuel.workers.dev";
 	try {
-		const response = await axios.post(
-			'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-			{
-				contents: [
-					{
-						parts: [
-							{
-								text: `Generate a Bible-based placeholder paragraph of exactly ${wordCount} words. The text should be meaningful, coherent, and resemble real Bible verses or phrases, but should not copy actual scripture. Output a single paragraph, not a list of words.`
-							}
-						]
-					}
-				]
-			},
-			{
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				params: {
-					key: apiKey
+		const promptObj = {
+			contents: [
+				{
+					parts: [
+						{
+							text: `Generate a Bible-based placeholder paragraph of exactly ${wordCount} words. The text should be meaningful, coherent, and resemble real Bible verses or phrases, but should not copy actual scripture. Output a single paragraph, not a list of words.`
+						}
+					]
 				}
-			}
-		);
+			]
+		};
 
-		// Gemini's response structure
-		const result = response.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+		const response = await fetch(PROXY_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(promptObj),
+		});
+
+		if (!response.ok) {
+			throw new Error(await response.text());
+		}
+
+		const data: any = await response.json();
+		const result = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 		return result.trim();
 	} catch (error) {
-		console.error('The API key is:', apiKey);
 		console.error('Error generating AI-powered text:', error);
 		return 'Error generating text. Please try again.';
 	}
