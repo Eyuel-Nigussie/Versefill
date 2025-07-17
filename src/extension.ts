@@ -4,22 +4,16 @@ import axios from 'axios';
 async function generateAIPoweredVerseFill(wordCount: number): Promise<string> {
 	const PROXY_URL = "https://versefill-proxy.eyuel.workers.dev";
 	try {
-		const promptObj = {
-			contents: [
-				{
-					parts: [
-						{
-							text: `Generate a Bible-based placeholder paragraph of exactly ${wordCount} words. The text should be meaningful, coherent, and resemble real Bible verses or phrases, but should not copy actual scripture. Output a single paragraph, not a list of words.`
-						}
-					]
-				}
-			]
-		};
+		const model = "meta-llama/llama-3-8b-instruct";
+		const messages = [
+			{ role: "system", content: "You are a helpful assistant that generates Bible-based placeholder text." },
+			{ role: "user", content: `Generate a Bible-based placeholder paragraph of exactly ${wordCount} words. The text should be meaningful, coherent, and resemble real Bible verses or phrases, but should not copy actual scripture. Output a single paragraph, not a list of words. Do not use quotation marks in your output.` }
+		];
 
 		const response = await fetch(PROXY_URL, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(promptObj),
+			body: JSON.stringify({ model, messages }),
 		});
 
 		if (!response.ok) {
@@ -27,8 +21,18 @@ async function generateAIPoweredVerseFill(wordCount: number): Promise<string> {
 		}
 
 		const data: any = await response.json();
-		const result = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-		return result.trim();
+		let result = data.choices?.[0]?.message?.content || '';
+		// Remove leading/trailing quotes and trim
+		result = result.trim().replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '');
+		// Enforce word count as close a
+		const words = result.split(/\s+/);
+		if (words.length > wordCount) {
+			result = words.slice(0, wordCount).join(' ');
+		} else if (words.length < wordCount) {
+			// Optionally, pad with "..." if too short
+			result = words.join(' ') + ' ...';
+		}
+		return result;
 	} catch (error) {
 		console.error('Error generating AI-powered text:', error);
 		return 'Error generating text. Please try again.';

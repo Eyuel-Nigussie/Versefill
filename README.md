@@ -15,11 +15,8 @@ VerseFill is a Visual Studio Code extension that generates meaningful, Bible-ins
 - Use the keyboard shortcut `Ctrl+Alt+V` to trigger the command
 
 ## Requirements
-- Requires an API key for Gemini (Google Generative Language API)
-- Add your API key to a `.env` file in your project root:
-  ```
-  OPENAI_API_KEY=your_gemini_api_key_here
-  ```
+- No setup required. All API calls are handled securely through the built-in VerseFill server.
+- Just install and use!
 
 ## Extension Settings
 - `versefill.includeReferences`: Include Bible verse references in the generated text (default: false)
@@ -27,11 +24,6 @@ VerseFill is a Visual Studio Code extension that generates meaningful, Bible-ins
 ## Known Issues
 - Generated text is AI-generated and not actual scripture
 - Requires internet connection for API calls
-<!-- Next-Up
-## Release Notes
-### 1.1.0
-- Improved prompt for coherent Bible-based paragraphs
-- Added keyboard shortcut and command palette support -->
 
 ### 1.0.0
 - Initial release: basic placeholder text generation
