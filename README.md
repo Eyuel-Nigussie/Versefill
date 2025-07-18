@@ -24,6 +24,7 @@ VerseFill is a Visual Studio Code extension that generates meaningful, Bible-ins
 ## Known Issues
 - Generated text is AI-generated and not actual scripture
 - Requires internet connection for API calls
+- Word count may not match exactly the requested amount (actively working on and will be fixed in the next update)
 
 ### 1.0.0
 - Initial release: basic placeholder text generation

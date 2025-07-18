@@ -7,7 +7,7 @@ async function generateAIPoweredVerseFill(wordCount: number): Promise<string> {
 		const model = "meta-llama/llama-3-8b-instruct";
 		const messages = [
 			{ role: "system", content: "You are a helpful assistant that generates Bible-based placeholder text." },
-			{ role: "user", content: `Generate a single paragraph of exactly ${wordCount} words using real Bible verses or phrases. The result must be meaningful, coherent, and resemble a natural passage of scripture. Ensure the text reads smoothly, even if multiple verses are blended. Do not include verse numbers or quotation marks.` }
+			{ role: "user", content: `Generate an exact! ${wordCount}-wordcount placeholder about grace, hope, biblical figures, bible stories or deep meanings portrayed. Do not reiterate, or use quotation marks.` }
 		];
 
 		const response = await fetch(PROXY_URL, {
