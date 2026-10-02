@@ -4,15 +4,12 @@ import tsParser from "@typescript-eslint/parser";
 export default [{
     files: ["**/*.ts"],
 }, {
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
-    },
+    plugins: { "@typescript-eslint": typescriptEslint, },
 
     languageOptions: {
         parser: tsParser,
         ecmaVersion: 2022,
-        sourceType: "module",
-    },
+        sourceType: "module",},
 
     rules: {
         "@typescript-eslint/naming-convention": ["warn", {
