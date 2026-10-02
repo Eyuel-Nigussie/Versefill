@@ -10,10 +10,7 @@
   "categories": [
     "Snippets"
   ],
-  "activationEvents": [
-    "*",
-    "onCommand:versefill.manual"
-  ],
+  "activationEvents": [ "*","onCommand:versefill.manual"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
